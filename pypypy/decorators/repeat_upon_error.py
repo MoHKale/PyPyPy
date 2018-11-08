@@ -39,7 +39,7 @@ class RepeatUponError(object):
             except (Exception, KeyboardInterrupt) as e:
                 error_container.append(e) # store current error in container
                 
-                skip = self.repeat_exception_types or e in self.repeat_exception_types
+                skip = self.repeat_exception_types or e.__class__ in self.repeat_exception_types
                 # skip when no repeat types given or exception contained in repeat types
                 
                 if not(skip) or X == self.attempt_count - 1:
