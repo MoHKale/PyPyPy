@@ -11,6 +11,7 @@ from requests import Session
 from bs4 import BeautifulSoup as BS4
 from ..decorators.sewd import SegmentExecutionWithDelay
 from ..decorators.repeat_upon_error import RepeatUponError
+
 from requests.exceptions import (
     ChunkedEncodingError, ConnectTimeout,
     ConnectionError, HTTPError, ReadTimeout, 
