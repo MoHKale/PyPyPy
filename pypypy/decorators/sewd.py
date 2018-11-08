@@ -1,6 +1,6 @@
 """SegmentExecutionWithDelay Delays Sequential Execution of a Given Function"""
 
-from functools import wraps, update_wrapper
+from functools import wraps, update_wrapper, partial
 import time
     
 class SegmentExecutionWithDelay(object):
@@ -31,6 +31,9 @@ class SegmentExecutionWithDelay(object):
         return_value = self.func(*args, **kwargs)
         self._last_executed = time.time() # update
         return return_value # executed function
+        
+    def __get__(self, instance, owner):
+        return partial(self.__call__, instance)
         
     @property
     def ready(self):

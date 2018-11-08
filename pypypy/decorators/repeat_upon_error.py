@@ -1,4 +1,4 @@
-from functools import wraps, update_wrapper
+from functools import wraps, update_wrapper, partial
 import time
 
 class StoredExceptionArray(Exception):
@@ -45,6 +45,9 @@ class RepeatUponError(object):
                 if not(skip) or X == self.attempt_count - 1:
                     # raise regardless of skip when last attempt
                     raise StoredExceptionArray(error_container)
+                    
+    def __get__(self, instance, owner):
+        return partial(self.__call__, instance)
     
     @classmethod
     def repeat(cls, count: int, repeat_exception_types=None):
