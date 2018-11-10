@@ -83,7 +83,7 @@ def create_request_mixin(**kwargs):
             Explicit Request Method Which Should Be Used By To Make The Request, Defaults
             to self.session.get .
         """
-        @logger.wrap_entry(new_name='MakeRequest', include_params=True)
+        @logger.wrap__entry(new_name='MakeRequest', include_params=True)
         @RepeatUponError.repeat(default_repeat_on_request_error, request_exceptions)
         @SegmentExecutionWithDelay.delay(default_delay_between_requests)
         def make_request(self, url, *args, **kwargs):
