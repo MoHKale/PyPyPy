@@ -5,7 +5,7 @@ with open('README.MD', 'r') as File:
 
 setuptools.setup(
     name='pypypy',
-    version='0.0.1',
+    version='0.0.2',
     author='Mohkale',
     auther_email='Mohkalsin@gmail.com',
     long_description=long_description,

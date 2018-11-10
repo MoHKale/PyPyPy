@@ -12,6 +12,8 @@ from bs4 import BeautifulSoup as BS4
 from ..decorators.sewd import SegmentExecutionWithDelay
 from ..decorators.repeat_upon_error import RepeatUponError
 
+from wrap_logger.logger import Logger as WrapLogger
+
 from requests.exceptions import (
     ChunkedEncodingError, ConnectTimeout,
     ConnectionError, HTTPError, ReadTimeout, 
@@ -59,7 +61,8 @@ def create_request_mixin(**kwargs):
     default_soup_parser       = kwargs.pop('soup_parser', 'html.parser')
     default_request_method    = kwargs.pop('request_method', None)
     default_delay_between_requests = kwargs.pop('request_delay', 0)
-    default_repeat_on_request_error = kwargs.pop('max_attempt_count', 5) 
+    default_repeat_on_request_error = kwargs.pop('max_attempt_count', 5)
+    logger = kwargs.pop('logger', WrapLogger())
     
     class RequestMixin(object):
         """Method To Perform A Request To A Given URL With The Given Arguments &
@@ -80,6 +83,7 @@ def create_request_mixin(**kwargs):
             Explicit Request Method Which Should Be Used By To Make The Request, Defaults
             to self.session.get .
         """
+        @logger.wrap_entry(new_name='MakeRequest', include_params=True)
         @RepeatUponError.repeat(default_repeat_on_request_error, request_exceptions)
         @SegmentExecutionWithDelay.delay(default_delay_between_requests)
         def make_request(self, url, *args, **kwargs):
@@ -101,7 +105,12 @@ def create_request_mixin(**kwargs):
                 self.session.headears['referrer'] = update_referrer # assign when different
             #endregion
             
-            response = request_method(url, *args, **kwargs)
+            #region Make Request
+            formatted_a_kw = logger.format_params(*args, **kwargs) # format params
+            logger.debug(f'Making Request To Url "{url}" With {formatted_a_kw}')
+            response = request_method(url, *args, **kwargs) # store request response
+            logger.debug(f'Response Recieved With Status {response.status_code}')
+            #endregion
             
             #region Post-Request-Actions
             if check_status_code: response.raise_for_status()
