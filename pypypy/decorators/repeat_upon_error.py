@@ -36,7 +36,7 @@ class RepeatUponError(object):
         for X in range(0, self.attempt_count):
             try:
                 return self.func(*args, **kwargs)
-            except (Exception, KeyboardInterrupt) as e:
+            except Exception as e:
                 error_container.append(e) # store current error in container
                 
                 skip = self.repeat_exception_types or e.__class__ in self.repeat_exception_types
