@@ -56,6 +56,35 @@ def create_request_mixin(**kwargs):
         >>> create_request_mixin().make_request.delay = input('New Delay Value :> ')
     max_attempt_count : int
         Maximum number of times a request can be made when an error is encountered.
+        
+    Example
+    -------
+    
+    Using The create_request_mixin Method
+    
+        from request_mixin import create_request_mixin
+        
+        class B(create_request_mixin(), object):
+            pass
+            
+        B().make_request('https://www.google.co.uk')
+        
+    Customising Default Request Behaviour Using create_request_mixin
+    
+        from request_mixin import create_request_mixin
+        
+        class C(
+            create_request_mixin(
+                request_method='POST',
+                check_status_code=True,
+                max_attempt_count=10,
+                request_delay=3
+            ), 
+            object
+        ):
+            pass
+            
+        C().make_request('https://www.google.co.uk')
     """
     
     default_check_status_code       = kwargs.pop('check_status_code', False)
@@ -72,6 +101,22 @@ def create_request_mixin(**kwargs):
         raise ValueError(f'{name} Recieved Some Unexpected Keyword Arguments {kwargs}')
     
     class RequestMixin(object):
+        """Mixin class containing a single requests.Session instance shared alongside
+        any implementing classes.
+        
+        Example
+        -------
+        
+        Using The Module Level Global RequestMixin Instance
+        
+            from request_mixin import RequestMixin
+        
+            class A(RequestMixin, object):
+                pass
+        
+            A().make_request('https://www.google.co.uk')
+            
+        """
         @logger.wrap__entry(new_name='Making Request', include_params=True)
         @RepeatUponError.repeat(default_repeat_on_request_error, request_exceptions)
         @SegmentExecutionWithDelay.delay(default_delay_between_requests)
