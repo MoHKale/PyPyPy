@@ -148,5 +148,3 @@ def create_request_mixin(**kwargs):
         session = Session() # create new session instance as class level reference
     
     return RequestMixin
-    
-RequestMixin = create_request_mixin()
