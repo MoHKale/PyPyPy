@@ -3,7 +3,12 @@ import time
 
 class StoredExceptionArray(Exception):
     """Stores an Ordered Collection of Raised Exceptions"""
-    pass
+    def __init__(self, *errors):
+        self.errors = errors
+    
+    @property
+    def all_same(self):
+        return len(set(map(type, self.errors))) == 1
 
 class RepeatUponError(object):
     """Class Decorator To Allow Repeat Function Execution
@@ -47,7 +52,7 @@ class RepeatUponError(object):
                 
                 if e.__class__ not in self.repeat_exception_types: 
                     raise e # re-raise when unknown exception
-                elif last_attempt: raise StoredExceptionArray(error_container)
+                elif last_attempt: raise StoredExceptionArray(*error_container)
                     
     def __get__(self, instance, owner):
         return partial(self.__call__, instance)
