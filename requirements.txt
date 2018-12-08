@@ -1,0 +1,3 @@
+bs4
+requests
+git+https://github.com/MoHKale/Wrap-Logger
