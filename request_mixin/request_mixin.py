@@ -161,7 +161,7 @@ def create_request_mixin(**kwargs):
             
             #region Make Request
             formatted_a_kw = logger.format_params(*args, **kwargs) # format params
-            logger.debug(f'Making Request To Url "{url}" With {formatted_a_kw}')
+            logger.debug(f'Making Request To Url "{url}" With {formatted_a_kw} Using {request_method.__name__.upper()}')
             response = request_method(url, *args, **kwargs) # store request response
             logger.debug(f'Response Recieved With Status {response.status_code}')
             #endregion
