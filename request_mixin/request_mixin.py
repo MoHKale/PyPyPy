@@ -2,8 +2,8 @@
 so any implementing classes can make requests in a consistent reliable format.
 
 If you don't want session instances to be shared between request classes, 
-instead of using the auto created pypypy.mixins.request_mixin.RequestMixin
-use pypypy.mixins.request_mixin.create_request_mixin() to create a new un-
+instead of using the auto created request_mixin.request_mixin.RequestMixin
+use request_mixin.request_mixin.create_request_mixin() to create a new un-
 related request mixin class.
 """
 
