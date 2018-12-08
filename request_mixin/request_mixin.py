@@ -37,8 +37,8 @@ def create_request_mixin(**kwargs):
     ----------
     check_status_code : bool
         Default Value For whether Request Status Codes Are Automatically Checked.
-    update_referrer : str
-        Default Referrer Value Assigned Upon Each Request, Set To None to Ignore.
+    update_referer : str
+        Default referer Value Assigned Upon Each Request, Set To None to Ignore.
     soup_parser : str
         Default Parser Used By BeautifulSoup. Defaults To html.parser
     request_method : str || Callable
@@ -88,7 +88,7 @@ def create_request_mixin(**kwargs):
     """
     
     default_check_status_code       = kwargs.pop('check_status_code', False)
-    default_referrer                = kwargs.pop('update_referrer', None)
+    default_referer                = kwargs.pop('update_referer', None)
     default_soup_parser             = kwargs.pop('soup_parser', 'html.parser')
     default_request_method          = kwargs.pop('request_method', None)
     default_delay_between_requests  = kwargs.pop('request_delay', 0)
@@ -130,11 +130,11 @@ def create_request_mixin(**kwargs):
             check_status_code : bool
                 Whether an error should be raised if the recieved reponse does not have a
                 200 status code.
-            update_referrer : str
-                Updates referrer to this value when method is executed, note if a default
-                referrer was specified in the initial call to create_request_mixin, the
-                referrer will be reset to that default value in the next call to make request
-                unless a explicit referrer is again passed to the method.
+            update_referer : str
+                Updates referer to this value when method is executed, note if a default
+                referer was specified in the initial call to create_request_mixin, the
+                referer will be reset to that default value in the next call to make request
+                unless a explicit referer is again passed to the method.
             request_method : str || Callable
                 Explicit Request Method Which Should Be Used By To Make The Request, Defaults
                 to self.session.get .
@@ -142,7 +142,7 @@ def create_request_mixin(**kwargs):
             
             #region Kwarg Extraction
             check_status_code = kwargs.pop('check_status_code', default_check_status_code)
-            update_referrer   = kwargs.pop('update_referrer', default_referrer)
+            update_referer   = kwargs.pop('update_referer', default_referer)
             request_method    = kwargs.pop('request_method', 
                 default_request_method if default_request_method else self.session.get
             )
@@ -154,9 +154,9 @@ def create_request_mixin(**kwargs):
                 except ValueError:
                     raise ValueError(f'Unknown Request Method {request_method}')
             
-            current_referrer = self.session.headers.get('referrer', None) # extract
-            change_referrer  = update_referrer and current_referrer != update_referrer
-            if change_referrer: self.session.headers['referrer'] = update_referrer
+            current_referer = self.session.headers.get('referer', None) # extract
+            change_referer  = update_referer and current_referer != update_referer
+            if change_referer: self.session.headers['referer'] = update_referer
             #endregion
             
             #region Make Request
@@ -167,7 +167,7 @@ def create_request_mixin(**kwargs):
             #endregion
             
             #region Post-Request-Actions
-            if change_referrer: self.session.headers['referrer'] = current_referrer
+            if change_referer: self.session.headers['referer'] = current_referer
             if check_status_code: response.raise_for_status() # only accept code 200
             #endregion
             
