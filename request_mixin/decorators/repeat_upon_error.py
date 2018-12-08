@@ -37,14 +37,17 @@ class RepeatUponError(object):
             try:
                 return self.func(*args, **kwargs)
             except Exception as e:
-                error_container.append(e) # store current error in container
+                error_container.append(e) # store current error in error container/list
+                last_attempt = X == self.attempt_count - 1 # tried calling for the last time
                 
-                skip = self.repeat_exception_types or e.__class__ in self.repeat_exception_types
-                # skip when no repeat types given or exception contained in repeat types
+                if not(self.repeat_exception_types):
+                    if last_attempt: raise e # supercede control to final exception 
+                    else: continue # skip on all exceptions until last attempt reached
+                # else self.repeat_exception_types is assumed to be a truthy value/list
                 
-                if not(skip) or X == self.attempt_count - 1:
-                    # raise regardless of skip when last attempt
-                    raise StoredExceptionArray(error_container)
+                if e.__class__ not in self.repeat_exception_types: 
+                    raise e # re-raise when unknown exception
+                elif last_attempt: raise StoredExceptionArray(error_container)
                     
     def __get__(self, instance, owner):
         return partial(self.__call__, instance)
