@@ -9,8 +9,8 @@ related request mixin class.
 
 from requests import Session
 from bs4 import BeautifulSoup as BS4
-from ..decorators.sewd import SegmentExecutionWithDelay
-from ..decorators.repeat_upon_error import RepeatUponError
+from .decorators.sewd import SegmentExecutionWithDelay
+from .decorators.repeat_upon_error import RepeatUponError
 
 from wrap_logger.logger import Logger as WrapLogger
 
