@@ -102,8 +102,9 @@ def create_request_mixin(**kwargs):
                 except ValueError:
                     raise ValueError(f'Unknown Request Method {request_method}')
             
-            if update_referrer and self.session.headears.get('referrer', None) != update_referrer:
-                self.session.headears['referrer'] = update_referrer # assign when different
+            current_referrer = self.session.headers.get('referrer', None) # extract
+            change_referrer  = update_referrer and current_referrer != update_referrer
+            if change_referrer: self.session.headers['referrer'] = update_referrer
             #endregion
             
             #region Make Request
@@ -114,7 +115,8 @@ def create_request_mixin(**kwargs):
             #endregion
             
             #region Post-Request-Actions
-            if check_status_code: response.raise_for_status()
+            if change_referrer: self.session.headers['referrer'] = current_referrer
+            if check_status_code: response.raise_for_status() # only accept code 200
             #endregion
             
             return response # give back acceptable request response
