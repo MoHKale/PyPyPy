@@ -65,28 +65,29 @@ def create_request_mixin(**kwargs):
     logger                          = kwargs.pop('logger', WrapLogger(__name__))
     
     class RequestMixin(object):
-        """Method To Perform A Request To A Given URL With The Given Arguments &
-        Keyword Arguments. Note, Some Keyword Arguments Are Used Explicitly By The
-        Method Itself & Will Not Be Passed In The Request To The Given.
-        
-        Parameters
-        ----------
-        check_status_code : bool
-            Whether an error should be raised if the recieved reponse does not have a
-            200 status code.
-        update_referrer : str
-            Updates referrer to this value when method is executed, note if a default
-            referrer was specified in the initial call to create_request_mixin, the
-            referrer will be reset to that default value in the next call to make request
-            unless a explicit referrer is again passed to the method.
-        request_method : str || Callable
-            Explicit Request Method Which Should Be Used By To Make The Request, Defaults
-            to self.session.get .
-        """
         @logger.wrap__entry(new_name='Making Request', include_params=True)
         @RepeatUponError.repeat(default_repeat_on_request_error, request_exceptions)
         @SegmentExecutionWithDelay.delay(default_delay_between_requests)
         def make_request(self, url, *args, **kwargs):
+            """Method To Perform A Request To A Given URL With The Given Arguments &
+            Keyword Arguments. Note, Some Keyword Arguments Are Used Explicitly By The
+            Method Itself & Will Not Be Passed In The Request To The Given.
+            
+            Parameters
+            ----------
+            check_status_code : bool
+                Whether an error should be raised if the recieved reponse does not have a
+                200 status code.
+            update_referrer : str
+                Updates referrer to this value when method is executed, note if a default
+                referrer was specified in the initial call to create_request_mixin, the
+                referrer will be reset to that default value in the next call to make request
+                unless a explicit referrer is again passed to the method.
+            request_method : str || Callable
+                Explicit Request Method Which Should Be Used By To Make The Request, Defaults
+                to self.session.get .
+            """
+            
             #region Kwarg Extraction
             check_status_code = kwargs.pop('check_status_code', default_check_status_code)
             update_referrer   = kwargs.pop('update_referrer', default_referrer)
