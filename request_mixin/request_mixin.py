@@ -7,6 +7,8 @@ use request_mixin.request_mixin.create_request_mixin() to create a new un-
 related request mixin class.
 """
 
+import json
+
 from requests import Session
 from bs4 import BeautifulSoup as BS4
 from .decorators.sewd import SegmentExecutionWithDelay
@@ -63,6 +65,11 @@ def create_request_mixin(**kwargs):
     default_delay_between_requests  = kwargs.pop('request_delay', 0)
     default_repeat_on_request_error = kwargs.pop('max_attempt_count', 5)
     logger                          = kwargs.pop('logger', WrapLogger(__name__))
+    
+    if len(kwargs) != 0:
+        name = 'create_request_mixin' # name of current method. Include in error msg
+        kwargs = json.dumps(list(kwargs.keys())).replace('[', '{').replace(']', '}')
+        raise ValueError(f'{name} Recieved Some Unexpected Keyword Arguments {kwargs}')
     
     class RequestMixin(object):
         @logger.wrap__entry(new_name='Making Request', include_params=True)
