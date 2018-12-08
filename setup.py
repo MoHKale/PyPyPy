@@ -4,7 +4,7 @@ with open('README.md', 'r') as File:
     long_description = File.read() 
 
 setuptools.setup(
-    name='pypypy',
+    name='request_mixin',
     version='0.0.2',
     author='Mohkale',
     auther_email='Mohkalsin@gmail.com',

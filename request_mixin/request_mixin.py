@@ -44,8 +44,8 @@ def create_request_mixin(**kwargs):
         Defaults To the GET method of the session instance bound to the mixin.
     request_delay : int
         Default Interval Between Subsequent Requests. Defaults to 0. Implemented
-        using pypypy.decorators.SegmentExecutionWithDelay therefore delay can be
-        changed in the returned mixin by setting
+        using request_mixin.decorators.SegmentExecutionWithDelay therefore delay 
+        can be changed in the returned mixin by setting
         
         >>> RequestMixin.make_request.delay = input('New Delay Value :> ')
         
