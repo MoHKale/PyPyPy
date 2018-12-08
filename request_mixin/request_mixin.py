@@ -56,13 +56,13 @@ def create_request_mixin(**kwargs):
         Maximum number of times a request can be made when an error is encountered.
     """
     
-    default_check_status_code = kwargs.pop('check_status_code', False)
-    default_referrer          = kwargs.pop('update_referrer', None)
-    default_soup_parser       = kwargs.pop('soup_parser', 'html.parser')
-    default_request_method    = kwargs.pop('request_method', None)
-    default_delay_between_requests = kwargs.pop('request_delay', 0)
+    default_check_status_code       = kwargs.pop('check_status_code', False)
+    default_referrer                = kwargs.pop('update_referrer', None)
+    default_soup_parser             = kwargs.pop('soup_parser', 'html.parser')
+    default_request_method          = kwargs.pop('request_method', None)
+    default_delay_between_requests  = kwargs.pop('request_delay', 0)
     default_repeat_on_request_error = kwargs.pop('max_attempt_count', 5)
-    logger = kwargs.pop('logger', WrapLogger(__name__))
+    logger                          = kwargs.pop('logger', WrapLogger(__name__))
     
     class RequestMixin(object):
         """Method To Perform A Request To A Given URL With The Given Arguments &
