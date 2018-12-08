@@ -117,7 +117,7 @@ def create_request_mixin(**kwargs):
             A().make_request('https://www.google.co.uk')
             
         """
-        @logger.wrap__entry(new_name='Making Request', include_params=True)
+        @logger.wrap__entry(new_name='Making Request', include_params=True, include_result=False)
         @RepeatUponError.repeat(default_repeat_on_request_error, request_exceptions)
         @SegmentExecutionWithDelay.delay(default_delay_between_requests)
         def make_request(self, url, *args, **kwargs):
