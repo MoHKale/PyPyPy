@@ -56,6 +56,10 @@ def create_request_mixin(**kwargs):
         >>> create_request_mixin().make_request.delay = input('New Delay Value :> ')
     max_attempt_count : int
         Maximum number of times a request can be made when an error is encountered.
+    persist_session : bool
+        Variable Indicating Whether a Single Request.Session Instance Should Be Used
+        For All Implementing Classes of The Mixin or Whether Each Implementing Class
+        Should Create It's Own Session Instance. By Defaulth This is True.
         
     Example
     -------
@@ -88,19 +92,20 @@ def create_request_mixin(**kwargs):
     """
     
     default_check_status_code       = kwargs.pop('check_status_code', False)
-    default_referer                = kwargs.pop('update_referer', None)
+    default_referer                 = kwargs.pop('update_referer', None)
     default_soup_parser             = kwargs.pop('soup_parser', 'html.parser')
     default_request_method          = kwargs.pop('request_method', None)
     default_delay_between_requests  = kwargs.pop('request_delay', 0)
     default_repeat_on_request_error = kwargs.pop('max_attempt_count', 5)
     logger                          = kwargs.pop('logger', WrapLogger(__name__))
+    persist_session                 = kwargs.pop('persist_session', True)
     
     if len(kwargs) != 0:
         name = 'create_request_mixin' # name of current method. Include in error msg
         kwargs = json.dumps(list(kwargs.keys())).replace('[', '{').replace(']', '}')
         raise ValueError(f'{name} Recieved Some Unexpected Keyword Arguments {kwargs}')
     
-    class RequestMixin(object):
+    class RequestMethodsMixin(object):
         """Mixin class containing a single requests.Session instance shared alongside
         any implementing classes.
         
@@ -199,7 +204,17 @@ def create_request_mixin(**kwargs):
 
             See Also: help(self.make_request)"""
             return self.make_request(url, *args, **kwargs).json()
-            
-        session = Session() # create new session instance as class level reference
     
+    if persist_session:
+        class RequestMixin(RequestMethodsMixin, object):
+            session = Session() # create as class level reference
+    else:
+        class RequestMixin(RequestMethodsMixin, object):
+            @property
+            def session(self):
+                if not hasattr(self, '_session'):
+                    self._session = Session()
+                    
+                return self._session
+
     return RequestMixin
