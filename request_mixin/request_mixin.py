@@ -10,8 +10,9 @@ related request mixin class.
 import json
 
 from requests import Session
+from types import MethodType
 from bs4 import BeautifulSoup as BS4
-from .decorators.sewd import SegmentExecutionWithDelay
+from .decorators.sewd import segment_execution_with_delay
 from .decorators.repeat_upon_error import RepeatUponError
 
 from wrap_logger.logger import Logger as WrapLogger
@@ -105,7 +106,7 @@ def create_request_mixin(**kwargs):
         kwargs = json.dumps(list(kwargs.keys())).replace('[', '{').replace(']', '}')
         raise ValueError(f'{name} Recieved Some Unexpected Keyword Arguments {kwargs}')
     
-    class RequestMethodsMixin(object):
+    class RequestMixin(object):
         """Mixin class containing a single requests.Session instance shared alongside
         any implementing classes.
         
@@ -122,9 +123,41 @@ def create_request_mixin(**kwargs):
             A().make_request('https://www.google.co.uk')
             
         """
-        @logger.wrap__entry(new_name='Making Request', include_params=True, include_result=False)
+
+        #region: Define Session Instance
+        def __init__(self):
+            if not(persist_session): self.session = Session()
+
+            logger_decorator = logger.wrap__entry(
+                new_name='Making Request', # new log name
+                include_params=True, include_result=False
+            )
+
+            repeater_decorator = RepeatUponError.repeat(
+                count=default_repeat_on_request_error, 
+                repeat_exception_types=request_exceptions
+            )
+
+            delayer_decorator = segment_execution_with_delay(
+                delay_attribute='request_delay'
+            )
+
+            self.make_request = MethodType(
+            logger_decorator(
+                repeater_decorator(
+                    delayer_decorator(
+                        self.make_request.__func__
+                    )
+                )
+            ), self)
+
+
+        if persist_session: session = Session() # as class variable
+        #endregion
+
+        """@logger.wrap__entry(new_name='Making Request', include_params=True, include_result=False)
         @RepeatUponError.repeat(default_repeat_on_request_error, request_exceptions)
-        @SegmentExecutionWithDelay.delay(default_delay_between_requests)
+        @segment_execution_with_delay('request_delay')"""
         def make_request(self, url, *args, **kwargs):
             """Method To Perform A Request To A Given URL With The Given Arguments &
             Keyword Arguments. Note, Some Keyword Arguments Are Used Explicitly By The
@@ -204,17 +237,7 @@ def create_request_mixin(**kwargs):
 
             See Also: help(self.make_request)"""
             return self.make_request(url, *args, **kwargs).json()
-    
-    if persist_session:
-        class RequestMixin(RequestMethodsMixin, object):
-            session = Session() # create as class level reference
-    else:
-        class RequestMixin(RequestMethodsMixin, object):
-            @property
-            def session(self):
-                if not hasattr(self, '_session'):
-                    self._session = Session()
-                    
-                return self._session
+
+        request_delay = default_delay_between_requests
 
     return RequestMixin
