@@ -155,9 +155,9 @@ def create_request_mixin(**kwargs):
         if persist_session: session = Session() # as class variable
         #endregion
 
-        """@logger.wrap__entry(new_name='Making Request', include_params=True, include_result=False)
+        @logger.wrap__entry(new_name='Making Request', include_params=True, include_result=False)
         @RepeatUponError.repeat(default_repeat_on_request_error, request_exceptions)
-        @segment_execution_with_delay('request_delay')"""
+        @segment_execution_with_delay('request_delay')
         def make_request(self, url, *args, **kwargs):
             """Method To Perform A Request To A Given URL With The Given Arguments &
             Keyword Arguments. Note, Some Keyword Arguments Are Used Explicitly By The

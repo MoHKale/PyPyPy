@@ -5,7 +5,7 @@ with open('README.md', 'r') as File:
 
 setuptools.setup(
     name='request_mixin',
-    version='0.0.5',
+    version='0.0.6',
     author='Mohkale',
     auther_email='Mohkalsin@gmail.com',
     long_description=long_description,
