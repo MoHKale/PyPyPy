@@ -23,7 +23,7 @@ from request_mixin import create_request_mixin
 
 class B(create_request_mixin(), object):
     pass
-    
+
 B().make_request('https://www.google.co.uk')
 ```
 
@@ -32,16 +32,14 @@ B().make_request('https://www.google.co.uk')
 ```python
 from request_mixin import create_request_mixin
 
-class C(
-    create_request_mixin(
-        request_method='POST',
-        check_status_code=True,
-        max_attempt_count=10,
-        request_delay=3
-    ),
-    object
-):
+RequestMixin = create_request_mixin(
+    request_method    = 'POST',
+    check_status_code = True,
+    max_attempt_count = 10,
+    request_delay     = 3)
+
+class C(RequestMixin, object):
     pass
-    
+
 C().make_request('https://www.google.co.uk')
 ```
