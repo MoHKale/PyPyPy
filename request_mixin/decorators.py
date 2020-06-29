@@ -51,7 +51,6 @@ class RepeatOnError(object):
         attempt_count = max(self._extract_attribute(requester, self.attempt_count), 1)
         request_delay = max(self._extract_attribute(requester, self.request_delay), 0)
         last_executed = {'time': None}  # remember when function was last delayed
-        print('attempt_count: %s\nrequest_delay: %s' % (attempt_count, request_delay))
 
         def recursively_invoke_func(attempt):
             try:
@@ -99,8 +98,6 @@ class RepeatOnError(object):
         if isinstance(attribute, tuple):
             attribute, default = attribute
 
-            print(dir(instance))
-            print('attribute: %s\nhas: %s' % (attribute, hasattr(instance, attribute)))
             if hasattr(instance, attribute):
                 return getattr(instance, attribute)
             return default
